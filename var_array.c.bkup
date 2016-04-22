@@ -129,30 +129,19 @@ int VA_sort(V_Array* a, funccmp cmp){
     return 0;
 }
 
-int VA_swap(V_Array* a, int i, int j) {
-	char* mobile;
-    void* eswap = malloc(a->e_size);
-    if(!eswap){
-        return RES_OUT_OF_MEM;
-    }
-    if (i >= a->a_count || j >= a->a_count || i < 0 || j < 0) {
-    	return RES_OUT_OF_BOUNDS;
-    }
-    mobile = (char*) a->array;
-	memcpy(eswap, (mobile+(i*a->e_size)), a->e_size);
-	memcpy((mobile+(i*a->e_size)), (mobile+(j*a->e_size)), a->e_size);
-	memcpy((mobile+(j*a->e_size)), eswap, a->e_size);
-
-	free(eswap);
-	return RES_OK;
-}
-
 void VA_qsort(V_Array* a, funccmp cmp, int inicio, int fin){
     char* mobile;
+    void* eswap;
     void* pivote;
     int i, j, ppos;
 
     if (fin<=inicio) return;
+
+    eswap=malloc(a->e_size);
+    if(!eswap){
+        fprintf(stderr, "out of mem\n");
+        return;
+    }
 
     ppos = inicio;
     mobile = (char*) a->array;
@@ -160,16 +149,20 @@ void VA_qsort(V_Array* a, funccmp cmp, int inicio, int fin){
 
     i=inicio+1; j=fin;
     do{
-        while( (i<=j) && (cmp( (mobile+(a->e_size * i)) , pivote) < 0) ) i++;
-        while( (i<=j) && (cmp( (mobile+(a->e_size * j)) , pivote) > 0) ) j--;
-        if(i<j && cmp( (mobile+(a->e_size * i)) , (mobile+(a->e_size * j)) ) != 0 ) {
-        	VA_swap(a, i, j);
-        } else if (i<j) {
-        	i++;
+        while( (i<=j) && (cmp( (mobile+(a->e_size * i)) , pivote) == -1) ) i++;
+        while( (i<=j) && (cmp( (mobile+(a->e_size * j)) , pivote) ==  1) ) j--;
+        if(i<j){
+            memcpy(eswap, (mobile+(i*a->e_size)), a->e_size);
+            memcpy((mobile+(i*a->e_size)), (mobile+(j*a->e_size)), a->e_size);
+            memcpy((mobile+(j*a->e_size)), eswap, a->e_size);
         }
     } while (i<j);
-    VA_swap(a, inicio, j);
 
+    memcpy(eswap, (mobile+(inicio*a->e_size)), a->e_size);
+    memcpy((mobile+(inicio*a->e_size)), (mobile+(j*a->e_size)), a->e_size);
+    memcpy((mobile+(j*a->e_size)), eswap, a->e_size);
+
+    free(eswap);
     VA_qsort(a, cmp, i, fin);
     VA_qsort(a, cmp, inicio, j-1);
 }
