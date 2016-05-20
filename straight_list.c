@@ -1,5 +1,36 @@
 #include "straight_list.h"
 
+/* <private functions> */
+void dispose_node(straight_list_node_t * node, straight_list_destroy_t destroy) {
+	destroy(node->data);
+	free(node->data);
+	free(node);
+}
+
+straight_list_node_t * build_node(size_t size, const void* data, straight_list_copy_t copy) {
+	
+	straight_list_node_t *node = (straight_list_node_t*) malloc(sizeof(straight_list_node_t));
+	if (!node) { /* No hay memoria disponible */
+		return NULL;
+	}
+	
+	node->data = malloc (size);
+	if(!node->data) { /* No hay memoria disponible */
+		free(node);
+		return NULL;
+	}
+
+	if(copy(node->data, data) != RES_OK) {
+		free(node->data);
+		free(node);
+		return NULL;
+	}
+	
+	return node;
+}
+/* </private functions> */
+
+
 int straight_list_create(straight_list_t* lp, size_t size, straight_list_copy_t copy, straight_list_destroy_t destroy)
 {
 	lp->current = NULL;
@@ -82,25 +113,14 @@ void straight_list_delete(straight_list_t *lp)
 		}
 	}
 
-	lp->destroy(current->data);
-	free(current->data);
-	free(current);
+	dispose_node(current, lp->destroy);
 }
 
 int straight_list_insert(straight_list_t *lp, straight_list_movement_t m, const void* data)
 {
-	straight_list_node_t *new_node = (straight_list_node_t*) malloc(sizeof(straight_list_node_t));
-	if (!new_node) {
-		return FALSE; /* No hay memoria disponible */
-	}
-	new_node->data = malloc (lp->size);
-	if(!new_node->data)
-	{
-		free(new_node);
-		return FALSE;
-	}
-
-	lp->copy(new_node->data, data);
+	straight_list_node_t *new_node = build_node(lp->size, data, lp->copy);
+	if(!new_node) return FALSE;
+	
 	if ((lp->first == NULL) || (m==straight_list_first) || ((m==straight_list_previous) && (lp->first==lp->current)))
 	{
 		/*Si esta vacia o hay que insertar en el Primero o
@@ -123,5 +143,19 @@ int straight_list_insert(straight_list_t *lp, straight_list_movement_t m, const 
 	}
 	lp->current=new_node;
 	return TRUE;
+}
+
+int straight_list_update(straight_list_t* l, const void* data) {
+	if(!l->first) {
+		return FALSE; /* Lista vacía: No puedo actualizar */
+	}
+	void* tmp = l->current->data;
+	if(l->copy(l->current->data, data)) {
+		l->destroy(l->current->data);
+		return TRUE;
+	} else {
+		l->current->data = tmp;
+		return FALSE;
+	}
 }
 

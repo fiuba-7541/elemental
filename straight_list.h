@@ -36,6 +36,8 @@
 	 * funcion que se invocara al recibir un elemento para almacenar en la
 	 * estructura, de manera que se admita la posibilidad de almacenar copias
 	 * profundas de los elementos en la lista.
+	 * Debe devolver TRUE si pudo copiar src en dst o FALSE si hubo algún
+	 * problema y no pudo.
 	 */
 	typedef int (*straight_list_copy_t) (void* dst, const void* src);
 
@@ -133,6 +135,15 @@
 	 * Si pudo insertar el elemento devuelve TRUE, sino FALSE.
 	 */
 	int straight_list_insert(straight_list_t*, straight_list_movement_t, const void*);
+	
+	/**
+	 * ACTUALIZAR (el elemento corriente)
+	 * Pre: Lista creada.
+	 * Post: Se actualizó el elemento corriente, destruyendo el que estaba y
+	 *       cambiándolo por el pasado por parámetro.
+	 * Si pudo actualizar el elemento devuelve TRUE, sino FALSE.
+	 */
+	int straight_list_update(straight_list_t*, const void*);
 
 #endif /* __STRAIGHT_LIST_H__ */
 

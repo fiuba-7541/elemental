@@ -23,7 +23,7 @@
 
 void destruir_int(void* e){}
 
-int copiar_int(void* destino, void* origen)
+int copiar_int(void* destino, const void* origen)
 {
 	int* d = (int*) destino;
 	int* o = (int*) origen;
@@ -33,7 +33,7 @@ int copiar_int(void* destino, void* origen)
 
 void destruirInt(void* e){}
 
-int copiarInt(void* destino, void* origen)
+int copiarInt(void* destino, const void* origen)
 {
 	int* d = (int*) destino;
 	int* o = (int*) origen;
@@ -46,7 +46,7 @@ void destruir_string(void* e){
 	free(*d);
 }
 
-int copiar_string(void* destino, void* origen)
+int copiar_string(void* destino, const void* origen)
 {
 	char** d = (char**) destino;
 	char** o = (char**) origen;
@@ -61,7 +61,7 @@ void destruirString(void* e){
 	free(*d);
 }
 
-int copiarString(void* destino, void* origen)
+int copiarString(void* destino, const void* origen)
 {
 	char** d = (char**) destino;
 	char** o = (char**) origen;
@@ -163,4 +163,44 @@ int main(int argc, char** argv){
 	printf("all tests passed ok.\n");
 
 	return 0;
+}
+
+
+/* Other tests */
+#include "straight_list.h"
+#define RES_FAIL 42
+
+int fallar_al_copiar(void* dst, const void* src) {
+	return RES_FAIL;
+}
+
+int main_update_test(int argc, char** argv){
+	straight_list_t list;
+	int test_int = 0, test_out = -1;
+	
+	straight_list_create(&list, sizeof(int), copiar_int, destruir_int);
+	straight_list_insert(&list, straight_list_first, &test_int);
+	straight_list_get(&list, &test_out);
+	printf("dato obtenido: %d\n", test_out);
+	
+	test_int = 42;
+	straight_list_update(&list, &test_int);
+	straight_list_get(&list, &test_out);
+	printf("answer of life: %d\n", test_out);
+	
+	return EXIT_SUCCESS;
+}
+
+int main_fail_insert_test(int argc, char** argv){
+	straight_list_t list;
+	int test_int = 0;
+	
+	straight_list_create(&list, sizeof(int), fallar_al_copiar, destruir_int);
+	if(!straight_list_insert(&list, straight_list_first, &test_int)) {
+		printf("Fallo detectado: Prueba OK\n");
+	} else {
+		printf("Fallo ignorado: Prueba Fallida\n");
+	}
+	
+	return EXIT_SUCCESS;
 }

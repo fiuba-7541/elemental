@@ -9,7 +9,7 @@
 #include "TDATestCase.h"
 
 void destruir_int(void* e);
-int copiar_int(void* destino, void* origen);
+int copiar_int(void* destino, const void* origen);
 
 void test_stack_fill_and_empty(){
 	stack_t p;

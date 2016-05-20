@@ -1,0 +1,16 @@
+Escribir un programa en C que reciba como argumento por línea de comando
+la ruta a un archivo de input, y que imprima como salida, todos los 
+caracteres presentes en el archivo, pero no como están en el archivo, 
+sino ordenados alfabéticamente.
+
+Ejemplo:
+
+Input
+========================================================================
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmodu
+========================================================================
+
+Output
+========================================================================
+          ,,aacccdddddeeeeeeegiiiiiiillLmmmmnnoooooopprrrsssssstttttuuuu
+========================================================================

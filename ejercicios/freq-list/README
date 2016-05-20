@@ -1,0 +1,26 @@
+Escribir un programa en C que reciba como argumento por línea de comando
+la ruta a un archivo de input, y que imprima como salida, todas las 
+palabras presentes en el archivo junto con la cantidad de ocurrencias de
+de la palabra en el archivo. No se debe reportar las palabras más de una
+vez cada una. Es decir que si la palabra "hola" aparece 4 veces en el
+archivo de entrada, entonces la salida deberá indicar "hola,4" una sola
+vez. El orden en el que se imprima el resultado no será tomado en cuenta
+para la evaluación del ejercicio.
+
+Ejemplo:
+
+Input
+========================================================================
+Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet consectetur adipi
+========================================================================
+
+Output
+========================================================================
+adipi,1
+amet,2
+consectetur,1
+dolor,2
+ipsum,2
+Lorem,2
+sit,2
+========================================================================
