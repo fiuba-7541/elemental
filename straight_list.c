@@ -149,12 +149,19 @@ int straight_list_update(straight_list_t* l, const void* data) {
 	if(!l->first) {
 		return FALSE; /* Lista vacía: No puedo actualizar */
 	}
-	void* tmp = l->current->data;
-	if(l->copy(l->current->data, data) == RES_OK) {
-		l->destroy(tmp);
+	
+	void* new_data = malloc(l->size);
+	if(!new_data) {
+		return FALSE;
+	}
+	
+	if(l->copy(new_data, data) == RES_OK) {
+		l->destroy(l->current->data);
+		free(l->current->data);
+		l->current->data = new_data;
 		return TRUE;
 	} else {
-		l->current->data = tmp;
+		free(new_data);
 		return FALSE;
 	}
 }
