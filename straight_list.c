@@ -150,12 +150,11 @@ int straight_list_update(straight_list_t* l, const void* data) {
 		return FALSE; /* Lista vacía: No puedo actualizar */
 	}
 	void* tmp = l->current->data;
-	if(l->copy(l->current->data, data)) {
-		l->destroy(l->current->data);
+	if(l->copy(l->current->data, data) == RES_OK) {
+		l->destroy(tmp);
 		return TRUE;
 	} else {
 		l->current->data = tmp;
 		return FALSE;
 	}
 }
-
